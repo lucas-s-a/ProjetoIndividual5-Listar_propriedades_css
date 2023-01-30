@@ -7,7 +7,7 @@ no terminal dê comando:npm install
 
 após isso inicie o programa com o comando: ode index.js
 
-e você poderá uma lista ordenada de propriedades css ,que será armanezada em uma pasta com arquivo com extensão json
+e você poderá uma lista ordenada de propriedades css ,que será armanezada em uma pasta chamada "plista" com arquivo com extensão json
 
 após criar caso ache viável você pode adicionar ou remover propriedades css.
 
