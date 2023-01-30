@@ -15,6 +15,7 @@ function ProgMain(){
                 choices:[
                     'Criar Lista',
                     'Editar Lista',
+                    'Ver Dados',
                     'Sair'
                 ],
             },
@@ -26,7 +27,8 @@ function ProgMain(){
             Listapropriedades()
         }else if (escolher === 'Editar Lista'){
             EditarPropriedades()
-            console.log('Editar lista')
+        }else if(escolher === 'Ver Dados'){
+            Visualizardados()
         }else if  (escolher === 'Sair'){
             console.log(chalk.bgGreen.underline.blackBright('Obrigado Por nos escolher ,Tenha um bom dia'))
             process.exit()
@@ -40,12 +42,12 @@ const Listapropriedades = (entrada) => {
     let lista = []
     while (entrada != "sair") {
         entrada = command("Insira uma propriedade CSS:")
-        if(lista.indexOf(entrada) == -1 && entrada != "sair"){
+        if(lista.indexOf(`"${entrada}"`) == -1 && entrada != 'sair'){
             lista.push(`"${entrada}"`);
         }else if(entrada == 'sair' ){
             console.log('Encerrando lista ...')
         }
-        else{
+        else if(lista.indexOf(`"${entrada}"`) != -1){
             console.log('Regra já adicionada')
         }
     }
@@ -59,7 +61,7 @@ function CriarArquivo(lista){
     inquirer.prompt([
         {
             name:'lis',
-            message:'Deseja criar lista em arquivo?',
+            message:'Deseja criar nova lista em arquivo?',
 
         },
     ])
@@ -73,7 +75,7 @@ function CriarArquivo(lista){
                 fs.mkdirSync('plista')
             }
             if(fs.existsSync(`plista/${listacriada}.json`)){
-                console.log(chalk.bgRed.black('Está conta já existe!'),)
+                console.log(chalk.bgCyan.black('Nova Lista Criada!'),)
             }
             fs.writeFileSync(`plista/${listacriada}.json`,`{"list":[${lista}]}`,
             function (err){
@@ -86,6 +88,98 @@ function CriarArquivo(lista){
         }
     })
 }
-function EditarPropriedades(){
-    console.log()
+function EditarPropriedades(entrada){
+    inquirer
+    .prompt([
+        {
+            name:'listaatual',
+            message:'Nome do arquivo que possui os itens?'
+
+        },
+    ])
+    .then((answer) => {
+        const listaedit =answer['listaatual']
+        const listaed = Puxalista(listaedit)
+        
+        let listavelha = listaed.list
+        let lista = []
+        for (let cot=0; cot<listavelha.length;cot++){
+            lista.push(`"${listavelha[cot]}"`)
+        }
+        inquirer
+        .prompt([
+            {
+                type:'list',
+                name:'escolheritens',
+                message:'O que voce deseja fazer?',
+                choices:[
+                    'Adicionar na Lista',
+                    'Remover da Lista'
+                ],
+            },
+        ])
+        .then((anwer) => {
+            const escolheritens = anwer['escolheritens']
+
+            if (escolheritens === 'Adicionar na Lista'){
+                while (entrada != "sair") {
+                    entrada = command("Insira uma propriedade CSS:")
+                    if(lista.indexOf(`"${entrada}"`) == -1 && entrada != 'sair'){
+                        lista.push(`"${entrada}"`);
+                    }else if(entrada == 'sair' ){
+                        console.log('Encerrando lista ...')
+                    }else if(lista.indexOf(`"${entrada}"`) != -1){
+                        console.log('Regra já adicionada')
+                    }
+                }
+                let result= lista.sort().join("\n")
+                console.log(result)
+                CriarArquivo(lista)
+            }else if (escolheritens === 'Remover da Lista'){
+                while (entrada != "sair") {
+                    entrada = command("Insira uma propriedade CSS:")
+                    if(lista.indexOf(`"${entrada}"`) == -1 && entrada != 'sair'){
+                        console.log('Não existe esse elemento na lista')
+                    }else if(entrada == 'sair' ){
+                        console.log('Encerrando lista ...')
+                    }else if(lista.indexOf(`"${entrada}"`) != -1){
+                        lista.splice(lista.indexOf(`"${entrada}"`),1)
+                        console.log(`A propriedade ${entrada} foi removida da lista`)
+                    }
+                }
+                let result= lista.sort().join("\n")
+                console.log(result)
+                CriarArquivo(lista)
+            }
+        })
+    })
+}
+function Puxalista(listaedit){
+    const accountJSON = fs.readFileSync(`plista/${listaedit}.json`,{
+        encoding:'utf-8',
+        flag:'r',//quebra linha
+    })
+    return JSON.parse(accountJSON)
+}
+function Visualizardados(){
+    inquirer
+    .prompt([
+        {
+            name:'listaatual',
+            message:'Nome do arquivo que possui os itens?'
+
+        },
+    ])
+    .then((answer) => {
+        const listaedit =answer['listaatual']
+        const listaed = Puxalista(listaedit)
+        
+        let listavelha = listaed.list
+        let lista = []
+        for (let cot=0; cot<listavelha.length;cot++){
+            lista.push(`"${listavelha[cot]}"`)
+        }
+        let result= lista.sort().join("\n")
+        console.log(result)
+    })
 }
