@@ -99,7 +99,6 @@ function EditarPropriedades(entrada) {
 
             },
         ])
-        //começa aqui
         .then((answer) => {
             try {
                 const listaedit = answer['listaatual']
@@ -165,7 +164,7 @@ function EditarPropriedades(entrada) {
 function Puxalista(listaedit) {
     const accountJSON = fs.readFileSync(`plista/${listaedit}.json`, {
         encoding: 'utf-8',
-        flag: 'r',//quebra linha
+        flag: 'r',
     })
     return JSON.parse(accountJSON)
 }
